@@ -1,0 +1,193 @@
+:root {
+  --text-color: #1d1d1f;
+  --sub-text-color: #515154;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  
+  /* Weather Colors */
+  --sunny: #ffb800;
+  --cloudy: #6c757d;
+  --rainy: #007aff;
+  --snowy: #00d4ff;
+  --lightning: #7b2cbf;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+}
+
+.landing-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  transition: background 2s ease-in-out;
+  overflow: hidden;
+}
+
+/* Time-based Gradients */
+.morning {
+  background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 99%, #FAD0C4 100%);
+}
+.day {
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+.evening {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+.night {
+  background: linear-gradient(135deg, #485563 0%, #29323c 100%);
+}
+
+.night .content-card {
+  --glass-bg: rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-color: #ffffff;
+  --sub-text-color: #e0e0e0;
+}
+
+.night .clock-time { color: white; }
+
+/* Slow-moving BG animation layer */
+.background-animation {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  animation: moveAround 25s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes moveAround {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(15%, 15%); }
+}
+
+.content-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  padding: 4rem;
+  border-radius: 2.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 500px;
+  width: 90%;
+  animation: cardEntry 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 10;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.content-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes cardEntry {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.greeting h1 {
+  font-size: 2.2rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-color);
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clock-time {
+  font-size: 5.5rem;
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1;
+  color: #000;
+  font-variant-numeric: tabular-nums;
+  transition: color 1s ease;
+}
+
+.clock-date {
+  font-size: 1.1rem;
+  color: var(--sub-text-color);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.weather-container {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
+  padding: 1rem 1.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.2rem;
+  width: fit-content;
+  transition: transform 0.3s ease;
+}
+
+.weather-container:hover {
+  transform: scale(1.05);
+}
+
+.weather-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  animation: floatIcon 3s infinite ease-in-out;
+}
+
+@keyframes floatIcon {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+.weather-icon.sunny { color: var(--sunny); }
+.weather-icon.cloudy { color: var(--cloudy); }
+.weather-icon.rainy { color: var(--rainy); }
+.weather-icon.snowy { color: var(--snowy); }
+.weather-icon.lightning { color: var(--lightning); }
+
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--text-color);
+}
+
+.weather-info .temp {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.weather-info .desc {
+  font-size: 0.9rem;
+  color: var(--sub-text-color);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .clock-time { font-size: 4rem; }
+  .content-card { padding: 2.5rem 1.5rem; }
+  .greeting h1 { font-size: 1.8rem; }
+}
