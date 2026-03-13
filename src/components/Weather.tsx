@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Sun, Cloud, CloudRain, CloudSnow, CloudFog, CloudLightning, CloudDrizzle, RefreshCw } from 'lucide-react';
 
 interface WeatherData {
@@ -36,15 +37,15 @@ const Weather: React.FC = () => {
   }, [fetchWeather]);
 
   const getWeatherIcon = (code: number) => {
-    const props = { className: "weather-icon", size: 32 };
-    if (code === 0) return <Sun {...props} className={`${props.className} sunny`} aria-label="Sunny" />;
-    if (code >= 1 && code <= 3) return <Cloud {...props} className={`${props.className} cloudy`} aria-label="Partly cloudy" />;
-    if (code >= 45 && code <= 48) return <CloudFog {...props} className={`${props.className} foggy`} aria-label="Foggy" />;
-    if (code >= 51 && code <= 57) return <CloudDrizzle {...props} className={`${props.className} rainy`} aria-label="Drizzle" />;
-    if (code >= 61 && code <= 67) return <CloudRain {...props} className={`${props.className} rainy`} aria-label="Rainy" />;
-    if (code >= 71 && code <= 77) return <CloudSnow {...props} className={`${props.className} snowy`} aria-label="Snowy" />;
-    if (code >= 80 && code <= 82) return <CloudRain {...props} className={`${props.className} rainy`} aria-label="Showers" />;
-    if (code >= 95) return <CloudLightning {...props} className={`${props.className} lightning`} aria-label="Thunderstorm" />;
+    const props = { className: "text-white drop-shadow-md", size: 40, strokeWidth: 2 };
+    if (code === 0) return <Sun {...props} aria-label="Sunny" />;
+    if (code >= 1 && code <= 3) return <Cloud {...props} aria-label="Partly cloudy" />;
+    if (code >= 45 && code <= 48) return <CloudFog {...props} aria-label="Foggy" />;
+    if (code >= 51 && code <= 57) return <CloudDrizzle {...props} aria-label="Drizzle" />;
+    if (code >= 61 && code <= 67) return <CloudRain {...props} aria-label="Rainy" />;
+    if (code >= 71 && code <= 77) return <CloudSnow {...props} aria-label="Snowy" />;
+    if (code >= 80 && code <= 82) return <CloudRain {...props} aria-label="Showers" />;
+    if (code >= 95) return <CloudLightning {...props} aria-label="Thunderstorm" />;
     return <Cloud {...props} aria-label="Cloudy" />;
   };
 
@@ -59,14 +60,20 @@ const Weather: React.FC = () => {
     return 'Cloudy';
   };
 
-  if (loading && !weather) return <div className="weather" aria-live="polite">Updating weather...</div>;
+  if (loading && !weather) {
+    return (
+      <div className="flex items-center justify-center w-48 h-24 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl animate-pulse">
+        <span className="text-white/60 text-sm font-medium tracking-wide">Updating...</span>
+      </div>
+    );
+  }
   
   if (error && !weather) {
     return (
-      <div className="weather-error" aria-live="assertive">
-        <span>Weather unavailable</span>
-        <button onClick={fetchWeather} className="retry-btn" aria-label="Retry fetching weather">
-          <RefreshCw size={16} />
+      <div className="flex items-center justify-between w-48 h-24 bg-red-500/20 backdrop-blur-md border border-red-500/30 rounded-2xl p-4 text-red-100">
+        <span className="text-sm font-medium tracking-wide">Unavailable</span>
+        <button onClick={fetchWeather} className="p-2 bg-red-500/40 rounded-full hover:bg-red-500/60 transition-colors" aria-label="Retry fetching weather">
+          <RefreshCw size={18} />
         </button>
       </div>
     );
@@ -75,13 +82,30 @@ const Weather: React.FC = () => {
   if (!weather) return null;
 
   return (
-    <div className="weather-container" aria-live="polite" aria-label={`Current weather in Ingolstadt: ${Math.round(weather.temperature)} degrees, ${getWeatherDescription(weather.weathercode)}`}>
-      {getWeatherIcon(weather.weathercode)}
-      <div className="weather-info">
-        <span className="temp">{Math.round(weather.temperature)}°C</span>
-        <span className="desc">{getWeatherDescription(weather.weathercode)}</span>
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.6, duration: 0.6 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="flex items-center justify-center gap-4 bg-white/10 hover:bg-white/15 transition-colors backdrop-blur-md border border-white/20 rounded-[1.5rem] py-3 px-6 shadow-xl cursor-default w-full md:w-auto"
+      aria-label={`Current weather: ${Math.round(weather.temperature)} degrees, ${getWeatherDescription(weather.weathercode)}`}
+    >
+      <motion.div
+        animate={{ y: [0, -5, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      >
+        {getWeatherIcon(weather.weathercode)}
+      </motion.div>
+      <div className="flex flex-col items-start">
+        <span className="text-3xl font-bold text-white tracking-tight drop-shadow-md leading-none">
+          {Math.round(weather.temperature)}°
+        </span>
+        <span className="text-sm text-white/80 font-medium tracking-wide mt-1 drop-shadow-sm">
+          {getWeatherDescription(weather.weathercode)}
+        </span>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
