@@ -7,6 +7,7 @@ import MapComponent from './components/Map';
 
 function App() {
   const [timeOfDay, setTimeOfDay] = useState('night');
+  const [location, setLocation] = useState<{ lat: number; lon: number }>({ lat: 48.7656, lon: 11.4237 });
 
   useEffect(() => {
     const updateBackground = () => {
@@ -18,7 +19,24 @@ function App() {
     };
 
     updateBackground();
-    const interval = setInterval(updateBackground, 300000); // Check every 5 mins
+    const interval = setInterval(updateBackground, 300000);
+
+    // Update with real location if available
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    }
+
     return () => clearInterval(interval);
   }, []);
 
@@ -43,9 +61,9 @@ function App() {
       >
         <Greeting />
         <Clock />
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full mt-4">
-          <Weather />
-          <MapComponent />
+        <div className="flex flex-row items-center justify-center gap-6 w-full mt-4">
+          <Weather lat={location.lat} lon={location.lon} />
+          <MapComponent lat={location.lat} lon={location.lon} />
         </div>
       </motion.div>
     </div>

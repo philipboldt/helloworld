@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { motion } from 'framer-motion';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -16,9 +17,22 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent: React.FC = () => {
-  const markerPosition: [number, number] = [48.7665, 11.4257]; // Altstadt
-  const centerPosition: [number, number] = [48.7580, 11.4257]; // Fine-tuned shift
+interface MapProps {
+  lat: number;
+  lon: number;
+}
+
+// Helper component to handle centering
+const RecenterMap: React.FC<{ position: [number, number] }> = ({ position }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(position, map.getZoom());
+  }, [position, map]);
+  return null;
+};
+
+const MapComponent: React.FC<MapProps> = ({ lat, lon }) => {
+  const position: [number, number] = [lat, lon];
 
   return (
     <motion.div 
@@ -27,22 +41,27 @@ const MapComponent: React.FC = () => {
       transition={{ delay: 0.8, duration: 0.6 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="w-full md:w-56 h-32 rounded-[1.5rem] overflow-hidden border border-white/20 shadow-xl bg-white/5 backdrop-blur-md"
+      className="relative w-full md:w-56 h-32 rounded-[1.5rem] overflow-hidden border border-white/50 shadow-2xl bg-white/40 backdrop-blur-2xl"
     >
       <MapContainer 
-        key={`${centerPosition[0]}-${centerPosition[1]}`}
-        center={centerPosition} 
-        zoom={12} 
+        center={position} 
+        zoom={15} 
         scrollWheelZoom={false} 
         zoomControl={false}
         attributionControl={false}
-        style={{ height: '100%', width: '100%', backgroundColor: 'transparent' }}
+        style={{ height: '100%', width: '100%', filter: 'contrast(1.25) saturate(1.4) brightness(1.0)' }}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={markerPosition} />
+        <Marker position={position} />
+        <RecenterMap position={position} />
       </MapContainer>
+      
+      {/* Subtle indicator that it's centered on your location */}
+      <div className="absolute bottom-2 right-2 z-[1000] px-2 py-0.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+        <span className="text-[10px] text-white/60 font-medium tracking-tight">LIVE</span>
+      </div>
     </motion.div>
   );
 };
