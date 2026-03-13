@@ -19,9 +19,17 @@ const Clock: React.FC = () => {
     return date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   };
 
+  const timeString = formatTime(time);
+
   return (
-    <div className="clock" role="timer" aria-label={`Current time: ${formatTime(time)}`}>
-      <div className="clock-time">{formatTime(time)}</div>
+    <div className="clock" role="timer" aria-label={`Current time: ${timeString}`}>
+      <div className="clock-time">
+        {timeString.split('').map((char, index) => (
+          <span key={index} className={char === ':' ? 'time-separator' : 'time-char'}>
+            {char}
+          </span>
+        ))}
+      </div>
       <div className="clock-date">{formatDate(time)}</div>
     </div>
   );
