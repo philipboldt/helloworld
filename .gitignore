@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Vite & Node
+.vite
+node_modules
+dist
+dist-ssr
+
+# Environment
+.env
+.env.local
+.env.*
+
+# System
+.DS_Store
+.gemini

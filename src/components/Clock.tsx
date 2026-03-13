@@ -20,7 +20,7 @@ const Clock: React.FC = () => {
   };
 
   return (
-    <div className="clock">
+    <div className="clock" role="timer" aria-label={`Current time: ${formatTime(time)}`}>
       <div className="clock-time">{formatTime(time)}</div>
       <div className="clock-date">{formatDate(time)}</div>
     </div>
