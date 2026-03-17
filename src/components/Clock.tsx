@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const Clock: React.FC = () => {
+interface ClockProps {
+  timezone: string;
+}
+
+const Clock: React.FC<ClockProps> = ({ timezone }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -13,11 +17,23 @@ const Clock: React.FC = () => {
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit', 
+      hour12: false,
+      timeZone: timezone
+    });
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric',
+      timeZone: timezone
+    });
   };
 
   const timeString = formatTime(time);
